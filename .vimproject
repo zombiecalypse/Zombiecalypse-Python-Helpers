@@ -1,0 +1,7 @@
+
+PythonHelpers=/home/aaron/Dropbox/Projects/PythonHelpers {
+	src=PythonHelpers filter="\(test_\)\@!*.py" {
+	}
+	tests=PythonHelpers filter=**/test_*.py" {
+	}
+}
