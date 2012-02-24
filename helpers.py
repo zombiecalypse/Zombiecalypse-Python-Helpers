@@ -85,3 +85,15 @@ def accessor(string, logger = _, type = _):
     def setter(self, val):
         setattr(self,attrname, val)
     return property(getter,setter)
+
+def list_of(type):
+    return lambda l: map(type, l)
+def tuple_of(*types):
+    return lambda l: tuple(t(v) for t,v in zip(types, l))
+def isa(type):
+    def f(x):
+        if isinstance(x, type):
+            return x
+        else:
+            raise ValueError("{!r} should be a {!r} but is not".format(x, type))
+    return f
