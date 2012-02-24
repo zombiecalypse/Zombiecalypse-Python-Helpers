@@ -1,6 +1,6 @@
 import unittest
 
-from .helpers import assure
+from helpers import assure
 
 class TestAssure(unittest.TestCase):
     def test_pass_through(self):

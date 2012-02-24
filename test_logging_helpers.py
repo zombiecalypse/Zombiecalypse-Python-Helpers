@@ -1,4 +1,4 @@
-from .helpers import function_logging, method_logging
+from helpers import function_logging, method_logging
 import unittest
 
 
