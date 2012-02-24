@@ -1,7 +1,10 @@
-
 PythonHelpers=/home/aaron/Dropbox/Projects/PythonHelpers {
 	src=PythonHelpers filter="\(test_\)\@!*.py" {
+  __init__.py
+  helpers.py
 	}
 	tests=PythonHelpers filter=**/test_*.py" {
+	 test_logging_helpers.py
+	 test_assure.py
 	}
 }

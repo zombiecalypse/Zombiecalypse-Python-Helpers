@@ -13,75 +13,75 @@ def _(x):
 	"as in @assure(_, int, float)"
 	return x
 class assure:
-	"""Assures a certain type on function calls. Ought to raise
-	an exception, if the respective argument does not satisfy its 
-	precondition and return a fitting representation of the argument
-	if it does. 
-	
-	Example:
-		@assure(int)
-		def f(x):
-			return x+1
-		
-		>>> f(1)
-		2
-		>>> f("2")
-		3
-		>>> f("bla")
-		ValueError: ...
-		"""
-	def __init__(self, *types, **keys):
-		self.__types = types
-		self.__keys  = keys
-	def __call__(self, func):
-		@wraps(func)
-		def modified(*args, **kwargs):
-            casted_args = [t(x) for t,x in zip(self.__types, args)],
+    """Assures a certain type on function calls. Ought to raise
+    an exception, if the respective argument does not satisfy its 
+    precondition and return a fitting representation of the argument
+    if it does. 
+
+    Example:
+        @assure(int)
+        def f(x):
+            return x+1
+
+        >>> f(1)
+        2
+        >>> f("2")
+        3
+        >>> f("bla")
+        ValueError: ...
+        """
+    def __init__(self, *types, **keys):
+        self.__types = types
+        self.__keys  = keys
+    def __call__(self, func):
+        @wraps(func)
+        def modified(*args, **kwargs):
+            casted_args = [t(x) for t,x in zip(self.__types, args)]
             casted_kwargs = dict([k, self.__keys[k](kwargs[k])] for k in kwargs)
-			return func( *casted_args, **casted_kwargs )
-		return modified
+            return func( *casted_args, **casted_kwargs )
+        return modified
 
 class Logging:
-	def func_arg(self, argument_list, keyword_arguments):
+    def func_arg(self, argument_list, keyword_arguments):
         argument_list_string = ", ".join(repr(arg) for arg in argument_list)
-        keyword_string = ", ".join("{} = {}".format(k, v) for k, v in keyword_arguments.items())
-		return "({}, {})".format(argument_list_string, keyword_string)
+        keyword_string = ", ".join("{} = {!r}".format(k, v) for k, v in keyword_arguments.items())
+        return "({}, {})".format(argument_list_string, keyword_string)
 
-	def __init__(self, logger = logging.getLogger('Python').debug):
-		self.__logger = logger
+    def __init__(self, logger = logging.getLogger('Python').debug):
+        self.__logger = logger
 
-	def __call__(self, func):
-		@wraps(func)
-		def modified(*args, **key):
+    def __call__(self, func):
+        @wraps(func)
+        def modified(*args, **key):
             arguments = self.func_arg(args,key)
             self.__logger("%s%s" % (func.func_name, arguments))
             return func(*args, **key)
-		return modified
+        return modified
 
 class function_logging(Logging):
-	pass
+    pass
 
 class method_logging(Logging):
-	def func_arg(self, L, D):
-		return Logging.func_arg(self,L[1:], D)
+    def func_arg(self, L, D):
+        return Logging.func_arg(self,L[1:], D)
 
 class logging(method_logging):
-	pass
+    pass
 
 class func_name:
-	def __init__(self,name):
-		self.name = name
-	def __call__(self, f):
-		f.func_name = self.name
-		return f
+    def __init__(self,name):
+        self.name = name
+    def __call__(self, f):
+        f.func_name = self.name
+        return f
 
 def accessor(string, logger = _, type = _):
-	"""Shortcut to define a property object with type checking and logging"""
-	attrname = "_%s" %string
-	getter = lambda self: getattr(self, attrname)
-	@logging(logger)
-	@assure(_,type)
-	@func_name(string)
-	def setter(self, val):
-		setattr(self,attrname, val)
-	return property(getter,setter)
+    """Shortcut to define a property object with type checking and logging"""
+    attrname = "_%s" %string
+    getter = lambda self: getattr(self, attrname)
+    @logging(logger)
+    @assure(_,type)
+    @func_name(string)
+    def setter(self, val):
+        setattr(self,attrname, val)
+    return property(getter,setter)
