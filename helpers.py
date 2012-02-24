@@ -43,9 +43,11 @@ class assure:
 
 class Logging:
     def func_arg(self, argument_list, keyword_arguments):
-        argument_list_string = ", ".join(repr(arg) for arg in argument_list)
-        keyword_string = ", ".join("{} = {!r}".format(k, v) for k, v in keyword_arguments.items())
-        return "({}, {})".format(argument_list_string, keyword_string)
+        argument_strings = [repr(arg) for arg in argument_list]
+        keyword_strings = ["{} = {!r}".format(k, v) for k, v in
+                keyword_arguments.items()]
+
+        return "({})".format(", ".join(argument_strings + keyword_strings))
 
     def __init__(self, logger = logging.getLogger('Python').debug):
         self.__logger = logger
